@@ -1,57 +1,72 @@
+function validateForm() {
+    let isValid = true;
 
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector("form");
-    const passwordInput = document.getElementById("password");
+   
+    document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
 
-    const showPasswordToggle = document.createElement("input");
-    showPasswordToggle.type = "checkbox";
-    showPasswordToggle.id = "togglePassword";
+    const name = document.forms["myForm"]["name"].value.trim();
+    const email = document.forms["myForm"]["email"].value.trim();
+    const phone = document.forms["myForm"]["phone"].value.trim();
+    const shopName = document.forms["myForm"]["shop_name"].value.trim();
+    const password = document.forms["myForm"]["password"].value;
+    const established = document.forms["myForm"]["established"].value;
+    const category = document.forms["myForm"]["categories"].value;
+    const terms = document.forms["myForm"]["terms"].checked;
+    const shopTypes = document.forms["myForm"]["shop_type"];
 
-    const toggleLabel = document.createElement("label");
-    toggleLabel.htmlFor = "togglePassword";
-    toggleLabel.textContent = " Show Password";
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^[0-9]{11}$/;
 
-    passwordInput.parentNode.appendChild(showPasswordToggle);
-    passwordInput.parentNode.appendChild(toggleLabel);
+    if (name === "") {
+        document.getElementById("nameError").innerHTML = "Full Name is required.";
+        isValid = false;
+    }
 
-    showPasswordToggle.addEventListener("change", function () {
-        passwordInput.type = this.checked ? "text" : "password";
-    });
+    if (email === "") {
+        document.getElementById("emailError").innerHTML = "Email is required.";
+        isValid = false;
+    } else if (!emailPattern.test(email)) {
+        document.getElementById("emailError").innerHTML = "Invalid email format.";
+        isValid = false;
+    }
 
-    form.addEventListener("submit", function (e) {
-        const establishedYear = document.getElementById("established").value;
-        const year = parseInt(establishedYear);
-        const currentYear = new Date().getFullYear();
+    if (phone === "") {
+        document.getElementById("phoneError").innerHTML = "Phone number is required.";
+        isValid = false;
+    } else if (!phonePattern.test(phone)) {
+        document.getElementById("phoneError").innerHTML = "Phone must be 11 digits.";
+        isValid = false;
+    }
 
-        if (year < 1900 || year > currentYear) {
-            alert("Please enter a valid Established Year between 1900 and " + currentYear + ".");
-            e.preventDefault();
-            return;
-        }
+    if (shopName === "") {
+        document.getElementById("shopNameError").innerHTML = "Bookshop Name is required.";
+        isValid = false;
+    }
 
-        
-        let allValid = true;
-        const requiredFields = form.querySelectorAll("[required]");
-        requiredFields.forEach(field => {
-            if (!field.value || (field.type === "checkbox" && !field.checked)) {
-                field.style.borderColor = "red";
-                setTimeout(() => {
-                    field.style.borderColor = "#ccc";
-                }, 1500);
-                allValid = false;
-            }
-        });
+    if (password.length < 6) {
+        document.getElementById("passwordError").innerHTML = "Password must be at least 6 characters.";
+        isValid = false;
+    }
 
-        if (!allValid) {
-            alert("Please fill out all required fields.");
-            e.preventDefault();
-            return;
-        }
+    if (![...shopTypes].some(r => r.checked)) {
+        document.getElementById("shopTypeError").innerHTML = "Please select a shop type.";
+        isValid = false;
+    }
 
-        
-        const confirmSubmit = confirm("Do you want to submit the registration form?");
-        if (!confirmSubmit) {
-            e.preventDefault();
-        }
-    });
-});
+    if (established === "") {
+        document.getElementById("establishedError").innerHTML = "Established year is required.";
+        isValid = false;
+    }
+
+    if (category === "") {
+        document.getElementById("categoryError").innerHTML = "Please select a book category.";
+        isValid = false;
+    }
+
+    if (!terms) {
+        document.getElementById("termsError").innerHTML = "You must accept the terms & conditions.";
+        isValid = false;
+    }
+
+    return isValid;
+}
